@@ -10,38 +10,108 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody _rb;
 
+    private ICommand _wCommand;
+    private ICommand _upArrowCommand;    
+    private ICommand _aCommand;
+    private ICommand _sCommand;
+    private ICommand _dCommand;
+    private ICommand _qCommand;
+
+    private ICommand _lastCommand; //keep track of the last command
+    private ICommand _nextCommand;
+
     private void HandleInput()
     {
         if (Keyboard.current.wKey.wasPressedThisFrame)
         {
             //w was pressed
-            transform.Translate(MoveDistance * Vector3.forward, Space.World);
+            _wCommand.Execute();
+            _lastCommand = _wCommand;
+            _nextCommand = null;
+        }
+        if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+        {
+            //up arrow pressed
+            _upArrowCommand.Execute();
+            _lastCommand = _upArrowCommand;
+            _nextCommand = null;
         }
         if (Keyboard.current.aKey.wasPressedThisFrame)
         {
             //a was pressed
-            transform.Translate(MoveDistance * Vector3.left, Space.World);
+            _aCommand.Execute();
+            _lastCommand = _aCommand;
+            _nextCommand = null;
         }
         if (Keyboard.current.sKey.wasPressedThisFrame)
         {
             //s was pressed
-            transform.Translate(MoveDistance * Vector3.back, Space.World);
+            _sCommand.Execute();
+            _lastCommand = _sCommand;
+            _nextCommand = null;
         }
         if (Keyboard.current.dKey.wasPressedThisFrame)
         {
             //d was pressed
-            transform.Translate(MoveDistance * Vector3.right, Space.World);
-        }
+            _dCommand.Execute();
+            _lastCommand = _dCommand;
+            _nextCommand = null;
+}
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             //space was pressed
             _rb.AddForce(jumpForce* Vector3.up, ForceMode.Impulse);
         }
+        if (Keyboard.current.qKey.wasPressedThisFrame)
+        {
+            InvertControls();
+        }
+        if (Keyboard.current.zKey.wasPressedThisFrame)
+        {
+            if (_lastCommand != null)
+            {
+                _lastCommand.Undo();
+                _nextCommand = _lastCommand;
+                _lastCommand = null;
+            }
+                
+           
+        }
+        if (Keyboard.current.xKey.wasPressedThisFrame)
+        {
+            if (_nextCommand != null)
+            {
+                _nextCommand.Execute();
+                _lastCommand = _nextCommand;
+                _nextCommand = null;
+            }
+                
+
+        }
+        
+    }
+
+    private void InvertControls()
+    {
+        //inverting controls
+        Debug.Log("invertig controls");
+        (_wCommand, _sCommand) = (_sCommand, _wCommand);
+
+        (_aCommand, _dCommand) = (_dCommand, _aCommand);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //create a forward-command
+        _upArrowCommand = new MoveForwardCommand(transform, MoveDistance);
+        _wCommand = new MoveForwardCommand(transform, MoveDistance);
+        _aCommand = new MoveLeftCommand(transform, MoveDistance);
+        _sCommand = new MoveBackwardCommand(transform, MoveDistance);
+        _dCommand = new MoveRightCommand(transform, MoveDistance);
+        _lastCommand = null;
+        _nextCommand = null;
+        //_wCommand = new MoveForwardCommand(transform, MoveDistance);
         _rb = GetComponent<Rigidbody>(); //Get player's rigibBody component
     }
 
