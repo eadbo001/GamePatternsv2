@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private ICommand _sCommand;
     private ICommand _dCommand;
     private ICommand _qCommand;
+    private ICommand _spaceCommand;
 
     private ICommand _lastCommand; //keep track of the last command
     private ICommand _nextCommand;
@@ -60,7 +61,7 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             //space was pressed
-            _rb.AddForce(jumpForce* Vector3.up, ForceMode.Impulse);
+            _spaceCommand.Execute();
         }
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
@@ -109,6 +110,7 @@ public class PlayerController : MonoBehaviour
         _aCommand = new MoveLeftCommand(transform, MoveDistance);
         _sCommand = new MoveBackwardCommand(transform, MoveDistance);
         _dCommand = new MoveRightCommand(transform, MoveDistance);
+        _spaceCommand = new JumpCommand(_rb, jumpForce);
         _lastCommand = null;
         _nextCommand = null;
         //_wCommand = new MoveForwardCommand(transform, MoveDistance);
