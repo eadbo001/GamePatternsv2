@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,8 +24,8 @@ public class PlayerController : MonoBehaviour
     private ICommand _rCommand;
     private ICommand _spaceCommand;
 
-    private ICommand _lastCommand; //keep track of the last command
-    private ICommand _nextCommand;
+    // private ICommand _lastCommand; //keep track of the last command
+    // private ICommand _nextCommand;
 
     //last in first out = stack, so we need 2 stacks
     //undo stack and redo stack of ICommands
@@ -33,6 +34,8 @@ public class PlayerController : MonoBehaviour
 
     //replay stack is new Stack<ICommand>(undoStack.ToArray())
     private Stack<ICommand> replayStack;
+
+    private Action CubeWasCollected;
 
     private void HandleInput()
     {
@@ -180,6 +183,15 @@ public class PlayerController : MonoBehaviour
         (_aCommand, _dCommand) = (_dCommand, _aCommand);
     }
 
+    private void Awake()
+    {
+        Collectable.itemCollected += CubeWasCollected;
+    }
+
+    private void OnDisable()
+    {
+        Collectable.itemCollected -= CubeWasCollected;
+    }
  
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -191,8 +203,8 @@ public class PlayerController : MonoBehaviour
         _sCommand = new MoveBackwardCommand(transform, MoveDistance);
         _dCommand = new MoveRightCommand(transform, MoveDistance);
         _spaceCommand = new JumpCommand(_rb, jumpForce);
-        _lastCommand = null;
-        _nextCommand = null;
+        // _lastCommand = null;
+        // _nextCommand = null;
         //_wCommand = new MoveForwardCommand(transform, MoveDistance);
         _rb = GetComponent<Rigidbody>(); //Get player's rigibBody component
         startPosition = transform.position;
