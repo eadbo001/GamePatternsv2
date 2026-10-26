@@ -16,12 +16,12 @@ public class MoveForwardCommand : ICommand
 
     public void Execute()
     {
-        Debug.Log("FWD-command exec");
+        //Debug.Log("FWD-command exec");
         _transform.Translate(_amount * Vector3.forward, Space.World);
     }
     public void Undo()
     {
-        Debug.Log("L command undo");
+        //Debug.Log("L command undo");
         _transform.Translate(-_amount * Vector3.forward, Space.World);
     }
 }

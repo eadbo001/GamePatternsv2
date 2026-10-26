@@ -35,7 +35,18 @@ public class PlayerController : MonoBehaviour
     //replay stack is new Stack<ICommand>(undoStack.ToArray())
     private Stack<ICommand> replayStack;
 
-    private Action CubeWasCollected;
+    private int currentCubes = 0;
+
+    //increments a counter when collecting an item
+    //listens into the itemCollected Action
+    private void CubeWasCollected()
+    {
+        currentCubes++;
+
+        Debug.Log("Cubes collected: " + currentCubes);
+    }
+    
+
 
     private void HandleInput()
     {

@@ -9,14 +9,24 @@ public class Collectable : MonoBehaviour
 
     //Action itemCollected
     public static event Action itemCollected;
+
+    private bool collected = false;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("Player Collected");
-            //notify all observers
-            itemCollected?.Invoke();
-        }
+        if (collected || !other.CompareTag("Player"))
+            return;
+        
+        collected = true;
+
+        Debug.Log("Player Collected a box!");
+
+        //Invoke event notifying all observers
+        //null-conditional operator ?.
+        itemCollected?.Invoke();
+
+        gameObject.SetActive(false);
+
+
     }
 
 
