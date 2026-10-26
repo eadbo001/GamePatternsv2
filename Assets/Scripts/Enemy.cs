@@ -1,16 +1,23 @@
+using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+   public static event Action EnemyKilled;
 
-    // Update is called once per frame
-    void Update()
+   private bool defeated = false;
+
+   private void OnTriggerEnter(Collider other)
     {
-        
+        if (defeated ||!other.CompareTag("Player"))
+        return;
+
+        defeated = true;
+
+        Debug.Log("Enemy killed");
+
+        EnemyKilled?.Invoke();
+
+        gameObject.SetActive(false);
     }
 }

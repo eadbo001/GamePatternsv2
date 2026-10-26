@@ -16,12 +16,12 @@ public class MoveLeftCommand : ICommand
 
     public void Execute()
     {
-        Debug.Log("L command exec");
+        //Debug.Log("L command exec");
         _transform.Translate(_amount * Vector3.left, Space.World);
     }
     public void Undo()
     {
-        Debug.Log("L command undo");
+        //Debug.Log("L command undo");
         _transform.Translate(-_amount * Vector3.left, Space.World);
     }
 }
