@@ -41,7 +41,7 @@ public class AchivementSystem : MonoBehaviour
         Debug.Log("Achievement System: Enemies killed = "
                   + totalEnemiesKilled);
 
-        if (totalEnemiesKilled >= 20)
+        if (totalEnemiesKilled >= 5)
         {
             UnlockAchievement("Terminator");
         }

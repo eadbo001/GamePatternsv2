@@ -125,3 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b63d323ac93f3446a939617e7bbb7d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  hurtSound: {fileID: 8300000, guid: cf18e4eb7c58a06409f6f1df140b0e03, type: 3}

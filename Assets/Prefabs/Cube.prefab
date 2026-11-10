@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8f0ad8c975109b449f88897c4b91c4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collectable
+  collectSound: {fileID: 8300000, guid: cf7082747f71ca64bb37e78d2c5b2ca1, type: 3}
   RotationSpeed: 2
 --- !u!54 &5286718731275740525
 Rigidbody:

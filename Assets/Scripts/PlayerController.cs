@@ -194,7 +194,7 @@ public class PlayerController : MonoBehaviour
         (_aCommand, _dCommand) = (_dCommand, _aCommand);
     }
 
-    private void Awake()
+    private void OnEnable()
     {
         Collectable.itemCollected += CubeWasCollected;
     }

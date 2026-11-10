@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private AudioClip hurtSound;
    public static event Action EnemyKilled;
 
    private bool defeated = false;
@@ -13,7 +14,7 @@ public class Enemy : MonoBehaviour
         return;
 
         defeated = true;
-
+        AudioManager.PlaySFX(hurtSound);
         Debug.Log("Enemy killed");
 
         EnemyKilled?.Invoke();

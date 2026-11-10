@@ -4,6 +4,8 @@ using UnityEngine;
 public class Collectable : MonoBehaviour
 {
 
+    [SerializeField] private AudioClip collectSound;
+
     [Range(0.1f, 10f)]
     public float RotationSpeed = 2f;
 
@@ -17,6 +19,7 @@ public class Collectable : MonoBehaviour
             return;
         
         collected = true;
+        AudioManager.PlaySFX(collectSound);
 
         Debug.Log("Player Collected a box!");
 
