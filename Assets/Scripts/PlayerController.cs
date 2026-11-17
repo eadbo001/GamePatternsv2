@@ -1,6 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Mono.Cecil;
+
+
+//using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -23,6 +28,9 @@ public class PlayerController : MonoBehaviour
     private ICommand _dCommand;
     private ICommand _rCommand;
     private ICommand _spaceCommand;
+    private ICommand _crouchCommand;
+
+    private PlayerStateBase _currentState; //ref to state pattern
 
     // private ICommand _lastCommand; //keep track of the last command
     // private ICommand _nextCommand;
@@ -45,12 +53,48 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("Cubes collected: " + currentCubes);
     }
-    
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        //when landing on ground transition from jumping to standing.
+        if(collision.gameObject.CompareTag("Ground") && _currentState is JumpingState)
+        {
+            TransitionToState(new StandingState());
+            
+        }
+    }
+
+    //method for switching states with Enter/Exit methods
+    public void TransitionToState(PlayerStateBase nextState)
+    {
+        if (_currentState != null)
+        {
+            _currentState.Exit(this);
+        }
+
+        _currentState = nextState;
+
+        if (_currentState != null)
+        {
+            _currentState.Enter(this);
+        }
+    }
+    
 
     private void HandleInput()
     {
-        if (Keyboard.current.wKey.wasPressedThisFrame)
+        if (Keyboard.current == null) return;
+
+        if (_currentState != null)
+        {
+            PlayerStateBase nextState = _currentState.HandleInput(this);
+            if (nextState != _currentState)
+            {
+                TransitionToState(nextState);
+            }
+        }
+
+         if (Keyboard.current.wKey.wasPressedThisFrame)
         {
             //w was pressed
             _wCommand.Execute();
@@ -96,13 +140,7 @@ public class PlayerController : MonoBehaviour
 //             _lastCommand = _dCommand;
 //             _nextCommand = null;
         }
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            //space was pressed
-            _spaceCommand.Execute();
-            undoStack.Push(_spaceCommand);
-            redoStack.Clear();
-        }
+
         if (Keyboard.current.qKey.wasPressedThisFrame)
         {
             InvertControls();
@@ -138,6 +176,21 @@ public class PlayerController : MonoBehaviour
             //transform.position = startPosition;
             ReplayCommands();
         }
+    }
+
+    //public methods instead of if(key was pressed) so states can easily call them 
+    public void ExecuteJump()
+    {
+        _spaceCommand.Execute();
+        undoStack.Push(_spaceCommand);
+        redoStack.Clear();
+    }
+
+    public void ExecuteCrouch()
+    {
+        _crouchCommand.Execute();
+        undoStack.Push(_crouchCommand);
+        redoStack.Clear();
     }
 
     private void UndoCommand()
@@ -207,6 +260,8 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
+        _rb = GetComponent<Rigidbody>(); //Get player's rigibBody component
         //create a forward-command
         _upArrowCommand = new MoveForwardCommand(transform, MoveDistance);
         _wCommand = new MoveForwardCommand(transform, MoveDistance);
@@ -214,16 +269,19 @@ public class PlayerController : MonoBehaviour
         _sCommand = new MoveBackwardCommand(transform, MoveDistance);
         _dCommand = new MoveRightCommand(transform, MoveDistance);
         _spaceCommand = new JumpCommand(_rb, jumpForce);
+        _crouchCommand = new CrouchCommand(transform);
         // _lastCommand = null;
         // _nextCommand = null;
         //_wCommand = new MoveForwardCommand(transform, MoveDistance);
-        _rb = GetComponent<Rigidbody>(); //Get player's rigibBody component
+        
         startPosition = transform.position;
+        TransitionToState(new StandingState());
     }
 
     // Update is called once per frame
     void Update()
     {
         HandleInput();
+        
     }
 }
