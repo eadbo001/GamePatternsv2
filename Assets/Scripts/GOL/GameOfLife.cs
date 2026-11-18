@@ -9,6 +9,8 @@ public class GameOfLife : MonoBehaviour
     [Range(0.1f,5f)]
     public float TimeStep = 1f;
 
+    public bool RunSim = false;
+
     enum CellState
     {
         DEAD,
@@ -16,6 +18,8 @@ public class GameOfLife : MonoBehaviour
     }
 
     private CellState[,] CellGrid;
+    //private CellState[,,] CellGrid; A 3d cell grid with 2 different layers
+    //private CellState[,] CellGridNext; another grid to save the next state and be able to switch. 
     private GOFCell[,] SlabGrid;
 
     private float TimeAccu =0f;
@@ -117,6 +121,7 @@ public class GameOfLife : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!RunSim) return;
         TimeAccu += Time.deltaTime;
         if(TimeAccu >= TimeStep)
         {
